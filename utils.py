@@ -3,7 +3,6 @@ Some codes from https://github.com/Newmu/dcgan_code
 """
 from __future__ import division
 import math
-import json
 import random
 import pprint
 import scipy.misc
@@ -12,6 +11,7 @@ from time import gmtime, strftime
 from six.moves import xrange
 
 import tensorflow as tf
+
 import tensorflow.contrib.slim as slim
 
 pp = pprint.PrettyPrinter()
@@ -23,7 +23,7 @@ def initialize_uninitialized(sess):
   is_not_initialized = sess.run([tf.is_variable_initialized(var) for var in global_vars])
   not_initialized_vars = [v for (v,f) in zip(global_vars, is_not_initialized) if not f]
 
-  print [str(i.name) for i in not_initialized_vars]
+  print([str(i.name) for i in not_initialized_vars])
 
   if len(not_initialized_vars):
     sess.run(tf.variables_initializer(not_initialized_vars))
@@ -118,11 +118,13 @@ def make_gif(images, fname, duration=2, true_image=False):
   clip.write_gif(fname, fps = len(images) / duration)
 
 def visualize(sess, dcgan, config, option):
+
   image_frame_dim = int(math.ceil(config.batch_size**.5))
   if option == 0:
     z_sample = np.random.uniform(-0.5, 0.5, size=(config.batch_size, dcgan.z_dim))
     samples = sess.run(dcgan.sampler, feed_dict={dcgan.z: z_sample})
     save_images(samples, [image_frame_dim, image_frame_dim], './samples/test_%s.png' % strftime("%Y-%m-%d-%H-%M-%S", gmtime()))
+
   elif option == 1:
     values = np.arange(0, 1, 1./config.batch_size)
     for idx in xrange(dcgan.z_dim):
@@ -141,6 +143,7 @@ def visualize(sess, dcgan, config, option):
         samples = sess.run(dcgan.sampler, feed_dict={dcgan.z: z_sample})
 
       save_images(samples, [image_frame_dim, image_frame_dim], './samples/test_arange_%s.png' % (idx))
+
   elif option == 2:
     values = np.arange(0, 1, 1./config.batch_size)
     for idx in [random.randint(0, dcgan.z_dim - 1) for _ in xrange(dcgan.z_dim)]:
