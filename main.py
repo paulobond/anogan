@@ -89,13 +89,8 @@ def main(_):
       for idx in range(len(dcgan.test_data_names)):
         test_input = np.expand_dims(dcgan.test_data[idx],axis=0)
         test_name = dcgan.test_data_names[idx]
-        dcgan.train_anomaly_detector(FLAGS, test_input, test_name)
-
-    if FLAGS.test_quant:
-      print(f"TEST PHASE (QUANTITATIVE)")
-      os.makedirs(f'./test_result_quantitative/{FLAGS.dataset}', exist_ok=True)
-      dcgan.anomaly_detector(res_loss_w=FLAGS.res_loss_w)
-      assert len(dcgan.test_data_names) > 0
+        # Returns the anomality score (res_loss + detector_loss) and the res_loss
+        sample, error, ano_score, res_loss = dcgan.train_anomaly_detector(FLAGS, test_input, test_name)
 
 
 if __name__ == '__main__':
